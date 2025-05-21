@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES6 Features & Weather Forecast</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .custom-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 2.5rem;
+            max-width: 90vw;
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-control:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 0.25rem rgba(66, 153, 225, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #4299e1;
+            border-color: #4299e1;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #3182ce;
+            border-color: #3182ce;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .alert-warning {
+            background-color: #fefcbf;
+            color: #92400e;
+            border-color: #fbd38d;
+        }
+
+        .alert-danger {
+            background-color: #fed7d7;
+            color: #c53030;
+            border-color: #fc8181;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-container">
+        <h1 class="text-center text-dark fw-bold mb-4">Weather Forecast</h1>
+
+        <div class="d-flex flex-column flex-sm-row gap-3">
+            <input type="text" id="cityInput" placeholder="Enter city name (e.g., Delhi, Mumbai)"
+                class="form-control flex-grow-1">
+            <button id="fetchWeatherBtn" class="btn btn-primary fw-bold">Get Weather</button>
+        </div>
+
+        <div id="messageBox" class="alert alert-warning mt-3" style="display: none;"></div>
+
+        <div class="position-relative w-100" style="height: 320px;">
+            <canvas id="weatherChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const cityInput = document.getElementById('cityInput');
+        const fetchWeatherBtn = document.getElementById('fetchWeatherBtn');
+        const weatherChartCanvas = document.getElementById('weatherChart');
+        const messageBox = document.getElementById('messageBox');
+
+        let weatherChartInstance = null;
+
+        // Pre-defined list of Indian cities for demonstration
+        const indianCities = [
+            'Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata',
+            'Hyderabad', 'Ahmedabad', 'Pune', 'Jaipur', 'Lucknow'
+        ];
+
+        // Function to generate random weather data
+        const generateRandomWeatherData = (city) => {
+            const forecastData = [];
+            const now = new Date();
+
+            for (let i = 0; i < 8; i++) { // Generate 8 forecast points (e.g., every 3 hours for 24 hours)
+                const date = new Date(now.getTime() + (i * 3 * 60 * 60 * 1000)); // 3-hour intervals
+                const minTemp = 20; // Example minimum temperature
+                const maxTemp = 35; // Example maximum temperature
+                const temp = Math.floor(Math.random() * (maxTemp - minTemp + 1)) + minTemp;
+
+                forecastData.push({
+                    dt: Math.floor(date.getTime() / 1000), // Unix timestamp
+                    main: {
+                        temp: temp
+                    }
+                });
+            }
+            return {
+                list: forecastData,
+                city: {
+                    name: city
+                }
+            };
+        };
+
+        const displayMessage = (message, type = 'info') => {
+            messageBox.textContent = message;
+            messageBox.className = `alert ${type === 'error' ? 'alert-danger' : 'alert-warning'} mt-3`;
+            messageBox.style.display = 'block';
+        };
+
+        const hideMessage = () => {
+            messageBox.style.display = 'none';
+        };
+
+        const fetchWeatherData = async (city) => {
+            hideMessage();
+            if (!city) {
+                displayMessage('Please enter a city name.', 'error');
+                return;
+            }
+
+            const normalizedCity = city.toLowerCase();
+            const foundCity = indianCities.find(c => c.toLowerCase() === normalizedCity);
+
+            if (!foundCity) {
+                displayMessage(`Weather data not available for "${city}". Please try one of these cities: ${indianCities.join(', ')}.`, 'error');
+                if (weatherChartInstance) {
+                    weatherChartInstance.destroy();
+                    weatherChartInstance = null;
+                }
+                return;
+            }
+
+            // Simulate API call delay
+            displayMessage('Generating weather data...');
+            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate a network delay
+
+            try {
+                const data = generateRandomWeatherData(foundCity);
+
+                const forecastList = data.list;
+                const labels = forecastList.map(item => {
+                    const date = new Date(item.dt * 1000);
+                    return date.toLocaleString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        day: 'numeric',
+                        month: 'short'
+                    });
+                });
+                const temperatures = forecastList.map(item => item.main.temp);
+
+                renderChart(labels, temperatures, foundCity);
+                hideMessage();
+            } catch (error) {
+                console.error('Error generating weather:', error);
+                displayMessage(`Failed to generate weather data: ${error.message}`, 'error');
+                if (weatherChartInstance) {
+                    weatherChartInstance.destroy();
+                    weatherChartInstance = null;
+                }
+            }
+        };
+
+        const renderChart = (labels, data, city) => {
+            if (weatherChartInstance) {
+                weatherChartInstance.destroy();
+            }
+
+            weatherChartInstance = new Chart(weatherChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Temperature (°C) in ${city}`,
+                        data: data,
+                        borderColor: '#4299e1',
+                        backgroundColor: 'rgba(66, 153, 225, 0.2)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#4299e1',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#4299e1',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#333',
+                                font: { size: 14 }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#555', maxRotation: 50, minRotation: 30 }
+                        },
+                        y: {
+                            ticks: { color: '#555' },
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)',
+                                color: '#555'
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        fetchWeatherBtn.addEventListener('click', () => {
+            const city = cityInput.value.trim();
+            fetchWeatherData(city);
+        });
+    </script>
+</body>
+
+</html>

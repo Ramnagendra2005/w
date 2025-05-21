@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Tracking Concepts & Client-Side Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #0056b3;
+        }
+
+        section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+
+        .concept-box {
+            background-color: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .client-side-simulation {
+            background-color: #fffacd;
+            border-left: 5px solid #ffa500;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+            margin-right: 10px;
+        }
+
+        #transactionList {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+
+        #transactionList li {
+            margin-bottom: 5px;
+        }
+
+        .warning {
+            color: #cc0000;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #cc0000;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Session Tracking Mechanisms: Concepts & Client-Side Simulation</h1>
+
+        <div class="warning">
+            <p><strong>Important Note:</strong> This single HTML file cannot perform true server-side session tracking
+                (HTTP Session) or server-controlled Cookies.</p>
+            <p>The examples below illustrate the *concepts* and provide a *client-side simulation* using JavaScript's
+                `localStorage` and basic cookie manipulation. For real-world applications, a server-side language (like
+                Java, Python, Node.js, PHP) is required.</p>
+        </div>
+
+        <section>
+            <h2>1. Cookies (Server-Controlled & Client-Side Interaction)</h2>
+            <div class="concept-box">
+                <h3>Concept:</h3>
+                <p>Cookies are small pieces of data that a server sends to a user's web browser. The browser stores them
+                    and sends them back to the same server with later requests. This allows the server to "remember"
+                    information about the user.</p>
+                <p>Typical uses: Remembering preferences, tracking visits (e.g., "last visited" timestamp), or storing a
+                    user ID for auto-login (with security considerations).</p>
+                <p><strong>Server-Side Setting:</strong> A web server sends an `Set-Cookie` HTTP header to the browser.
+                </p>
+                <p><strong>Client-Side Reading:</strong> JavaScript can access certain types of cookies via
+                    `document.cookie`.</p>
+            </div>
+
+            <div class="client-side-simulation">
+                <h3>Client-Side Cookie Simulation (using JavaScript `document.cookie`)</h3>
+                <p>Here, we'll use JavaScript to set and read a simple cookie directly in your browser. This cookie will
+                    persist across page reloads (until its expiry or cleared by you).</p>
+
+                <p><strong>Your last simulated visit:</strong> <span id="lastVisitCookie">N/A</span></p>
+                <button onclick="setLastVisitCookie()">Record Current Visit</button>
+                <button onclick="clearLastVisitCookie()">Clear Last Visit Cookie</button>
+                <br><small>Refresh the page after clicking "Record Current Visit" to see the update.</small>
+
+                <script>
+                    function getCookie(name) {
+                        const nameEQ = name + "=";
+                        const ca = document.cookie.split(';');
+                        for (let i = 0; i < ca.length; i++) {
+                            let c = ca[i];
+                            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                        }
+                        return null;
+                    }
+
+                    function setCookie(name, value, days) {
+                        let expires = "";
+                        if (days) {
+                            const date = new Date();
+                            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                            expires = "; expires=" + date.toUTCString();
+                        }
+                        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+                    }
+
+                    function clearCookie(name) {
+                        document.cookie = name + '=; Max-Age=-99999999;';
+                    }
+
+                    function updateLastVisitDisplay() {
+                        const lastVisit = getCookie("lastVisit");
+                        if (lastVisit) {
+                            document.getElementById('lastVisitCookie').textContent = lastVisit;
+                        } else {
+                            document.getElementById('lastVisitCookie').textContent = "Never (or cookie cleared)";
+                        }
+                    }
+
+                    function setLastVisitCookie() {
+                        const now = new Date();
+                        setCookie("lastVisit", now.toLocaleString(), 7); // Set for 7 days
+                        updateLastVisitDisplay();
+                    }
+
+                    function clearLastVisitCookie() {
+                        clearCookie("lastVisit");
+                        updateLastVisitDisplay();
+                    }
+
+                    // Initial load
+                    document.addEventListener('DOMContentLoaded', updateLastVisitDisplay);
+                </script>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. HTTP Session (Server-Side Concept & Client-Side `localStorage` Simulation)</h2>
+            <div class="concept-box">
+                <h3>Concept:</h3>
+                <p>An HTTP Session is a server-side mechanism to maintain state for a user across multiple requests.
+                    When a user first interacts with a web application, the server creates a unique `HttpSession`
+                    object.</p>
+                <p>A unique **session ID** is generated and sent to the client (usually in a cookie, often named
+                    `JSESSIONID` or similar) to identify that session on subsequent requests.</p>
+                <p>Typical uses: Storing user login status, shopping cart contents, temporary data for a multi-step
+                    form.</p>
+                <p><strong>Key Difference:</strong> Data stored in an HTTP Session lives on the **server**, not the
+                    client.</p>
+            </div>
+
+            <div class="client-side-simulation">
+                <h3>Client-Side "Session" Simulation (using JavaScript `localStorage`)</h3>
+                <p>We'll use `localStorage` to simulate a "session" that persists across browser tabs/windows (similar
+                    to persistent cookies, but easier to manage complex data in JS). This data *does not go to the
+                    server automatically*.</p>
+
+                <p><strong>Your Simulated Login Status:</strong> <span id="loginStatus">Logged Out</span></p>
+                <button onclick="loginUser()">Login (Simulated)</button>
+                <button onclick="logoutUser()">Logout (Simulated)</button>
+
+                <h3>Simulated Transactional History (using `localStorage`)</h3>
+                <p>This history is stored in your browser's local storage. It will persist even if you close and reopen
+                    your browser tab.</p>
+                <input type="text" id="transactionInput" placeholder="Enter transaction description">
+                <button onclick="addTransaction()">Add Transaction</button>
+                <button onclick="clearTransactions()">Clear All Transactions</button>
+                <h4>Transactions:</h4>
+                <ul id="transactionList">
+                </ul>
+
+                <script>
+                    const LS_KEY_LOGIN = 'simulatedLoginStatus';
+                    const LS_KEY_TRANSACTIONS = 'simulatedTransactions';
+
+                    function updateLoginStatusDisplay() {
+                        const status = localStorage.getItem(LS_KEY_LOGIN);
+                        document.getElementById('loginStatus').textContent = status === 'loggedIn' ? 'Logged In' : 'Logged Out';
+                    }
+
+                    function loginUser() {
+                        localStorage.setItem(LS_KEY_LOGIN, 'loggedIn');
+                        updateLoginStatusDisplay();
+                        alert('Simulated Login: You are now "logged in" in your browser storage!');
+                    }
+
+                    function logoutUser() {
+                        localStorage.removeItem(LS_KEY_LOGIN);
+                        updateLoginStatusDisplay();
+                        alert('Simulated Logout: You are now "logged out" from your browser storage!');
+                    }
+
+                    function loadTransactions() {
+                        const transactions = JSON.parse(localStorage.getItem(LS_KEY_TRANSACTIONS) || '[]');
+                        const ul = document.getElementById('transactionList');
+                        ul.innerHTML = ''; // Clear previous list
+                        if (transactions.length === 0) {
+                            ul.innerHTML = '<li>No transactions recorded yet.</li>';
+                        } else {
+                            transactions.forEach(tx => {
+                                const li = document.createElement('li');
+                                li.textContent = tx;
+                                ul.appendChild(li);
+                            });
+                        }
+                    }
+
+                    function addTransaction() {
+                        const input = document.getElementById('transactionInput');
+                        const description = input.value.trim();
+                        if (description) {
+                            const transactions = JSON.parse(localStorage.getItem(LS_KEY_TRANSACTIONS) || '[]');
+                            const timestamp = new Date().toLocaleString();
+                            transactions.push(`${timestamp}: ${description}`);
+                            localStorage.setItem(LS_KEY_TRANSACTIONS, JSON.stringify(transactions));
+                            input.value = ''; // Clear input
+                            loadTransactions();
+                        } else {
+                            alert('Please enter a transaction description.');
+                        }
+                    }
+
+                    function clearTransactions() {
+                        localStorage.removeItem(LS_KEY_TRANSACTIONS);
+                        loadTransactions();
+                        alert('All simulated transactions cleared!');
+                    }
+
+                    // Initial load
+                    document.addEventListener('DOMContentLoaded', () => {
+                        updateLoginStatusDisplay();
+                        loadTransactions();
+                    });
+                </script>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 Session Tracking Concepts. All rights reserved.</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Custom styles to refine Bootstrap's default appearance or add specific spacing/sizing */
+        body {
+            background-color: #f4f7f6;
+            /* Light grey background */
+        }
+
+        .custom-header {
+            background-color: #28a745;
+            /* Green */
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 1px;
+        }
+
+        .custom-navbar {
+            background-color: #343a40;
+            /* Darker grey */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-sidebar {
+            background-color: #e9ecef;
+            /* Light grey */
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-sidebar .list-group-item {
+            border: none;
+            /* Remove default list group borders */
+            padding-left: 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-sidebar .list-group-item:hover {
+            background-color: #f8f9fa;
+            padding-left: 5px;
+            /* Slight indent on hover */
+        }
+
+        .product-card .card-img-top {
+            max-height: 150px;
+            object-fit: contain;
+            /* Ensures the image fits without cropping */
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+            /* !important to override Bootstrap default */
+        }
+
+        .price-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #28a745;
+            /* Green */
+        }
+
+        .custom-footer {
+            background-color: #343a40;
+            /* Darker grey */
+            color: white;
+            padding: 15px 0;
+            margin-top: 20px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="custom-header text-center">
+        <div class="container">
+            <h1 class="display-4">My Awesome Shopping Cart</h1>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Catalog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="row">
+            <aside class="col-md-3 mb-4 custom-sidebar p-3">
+                <h3 class="text-success border-bottom border-success pb-2 mb-3">Categories</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent">Electronics</li>
+                    <li class="list-group-item bg-transparent">Clothing</li>
+                    <li class="list-group-item bg-transparent">Books</li>
+                    <li class="list-group-item bg-transparent">Home & Kitchen</li>
+                    <li class="list-group-item bg-transparent">Sports & Outdoors</li>
+                </ul>
+            </aside>
+
+            <section class="col-md-9">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm">
+                            <img src="https://via.placeholder.com/150/007bff/ffffff?text=Product+1"
+                                class="card-img-top mx-auto d-block" alt="Product 1">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">Super Smartwatch</h5>
+                                <p class="card-text price-text">$199.99</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm">
+                            <img src="https://via.placeholder.com/150/28a745/ffffff?text=Product+2"
+                                class="card-img-top mx-auto d-block" alt="Product 2">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">Wireless Headphones</h5>
+                                <p class="card-text price-text">$79.50</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm">
+                            <img src="https://via.placeholder.com/150/dc3545/ffffff?text=Product+3"
+                                class="card-img-top mx-auto d-block" alt="Product 3">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">Stylish Backpack</h5>
+                                <p class="card-text price-text">$45.00</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm">
+                            <img src="https://via.placeholder.com/150/ffc107/333333?text=Product+4"
+                                class="card-img-top mx-auto d-block" alt="Product 4">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">Organic Coffee Beans</h5>
+                                <p class="card-text price-text">$12.99</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm">
+                            <img src="https://via.placeholder.com/150/17a2b8/ffffff?text=Product+5"
+                                class="card-img-top mx-auto d-block" alt="Product 5">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">Gaming Mouse</h5>
+                                <p class="card-text price-text">$35.25</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm">
+                            <img src="https://via.placeholder.com/150/6c757d/ffffff?text=Product+6"
+                                class="card-img-top mx-auto d-block" alt="Product 6">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary">Ergonomic Office Chair</h5>
+                                <p class="card-text price-text">$249.00</p>
+                                <a href="#" class="btn btn-primary mt-auto">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer class="custom-footer text-center">
+        <div class="container">
+            &copy; 2025 AwesomeCart. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTFyMGUHvMMiQoSAliRVaSGSXjAtoqofg/iJjAAoZK/t9k+8Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkmXLSDR5ogJhnrMFPN5r+E6QRMLQ5n9h5zaKjRNVd4sdrL+vI" crossorigin="anonymous"></script>
+</body>
+
+</html>

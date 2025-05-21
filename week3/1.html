@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 1 - Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 17px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.88em;
+            margin-top: 5px;
+            display: block;
+            min-height: 1.2em;
+        }
+
+        input.invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+        }
+    </style>
+</head>
+
+<body>
+    <form id="registrationForm">
+        <h1>Register for an Account</h1>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <div class="error-message" id="usernameError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email">
+            <div class="error-message" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <div class="error-message" id="passwordError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword">
+            <div class="error-message" id="confirmPasswordError"></div>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registrationForm = document.getElementById('registrationForm');
+
+            // Helper function to show/hide error messages and apply/remove 'invalid' class
+            function updateValidationStatus(elementId, message) {
+                const inputElement = document.getElementById(elementId);
+                const errorElement = document.getElementById(elementId + 'Error');
+
+                if (inputElement && errorElement) {
+                    if (message) {
+                        errorElement.textContent = message;
+                        inputElement.classList.add('invalid');
+                    } else {
+                        errorElement.textContent = '';
+                        inputElement.classList.remove('invalid');
+                    }
+                }
+            }
+
+            // Validation function for Username
+            function validateUsername(username) {
+                if (username.trim() === '') {
+                    return 'Username is required.';
+                }
+                if (username.trim().length < 3) {
+                    return 'Username must be at least 3 characters.';
+                }
+                return ''; // No error
+            }
+
+            // Validation function for Email
+            function validateEmail(email) {
+                if (email.trim() === '') {
+                    return 'Email is required.';
+                }
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    return 'Please enter a valid email address.';
+                }
+                return '';
+            }
+
+            // Validation function for Password
+            function validatePassword(password) {
+                if (password.trim() === '') {
+                    return 'Password is required.';
+                }
+                if (password.trim().length < 6) {
+                    return 'Password must be at least 6 characters.';
+                }
+                return '';
+            }
+
+            // Validation function for Confirm Password
+            function validateConfirmPassword(password, confirmPassword) {
+                if (confirmPassword.trim() === '') {
+                    return 'Please confirm your password.';
+                }
+                if (password !== confirmPassword) {
+                    return 'Passwords do not match.';
+                }
+                return '';
+            }
+
+            // Centralized validation logic for the entire form
+            function validateForm() {
+                let isValid = true;
+
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // Perform validations and update UI for each field
+                const usernameError = validateUsername(username);
+                updateValidationStatus('username', usernameError);
+                if (usernameError) isValid = false;
+
+                const emailError = validateEmail(email);
+                updateValidationStatus('email', emailError);
+                if (emailError) isValid = false;
+
+                const passwordError = validatePassword(password);
+                updateValidationStatus('password', passwordError);
+                if (passwordError) isValid = false;
+
+                const confirmPasswordError = validateConfirmPassword(password, confirmPassword);
+                updateValidationStatus('confirmPassword', confirmPasswordError);
+                if (confirmPasswordError) isValid = false;
+
+                return isValid;
+            }
+
+            // Event listener for form submission
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', function (event) {
+                    if (!validateForm()) {
+                        event.preventDefault(); // Stop form submission on validation failure
+                        console.log('Registration Form validation failed!');
+                    } else {
+                        console.log('Registration Form validation successful! Submitting...');
+                        // Form will submit naturally, or you can add AJAX here.
+                    }
+                });
+
+                // Event listener for real-time validation on input changes
+                // Using event delegation to capture 'input' events from all relevant fields
+                registrationForm.addEventListener('input', function (event) {
+                    const targetId = event.target.id;
+                    const value = event.target.value;
+
+                    // This switch statement calls the specific validation function based on the input's ID
+                    // and immediately updates its status.
+                    switch (targetId) {
+                        case 'username':
+                            updateValidationStatus('username', validateUsername(value));
+                            break;
+                        case 'email':
+                            updateValidationStatus('email', validateEmail(value));
+                            break;
+                        case 'password':
+                            updateValidationStatus('password', validatePassword(value));
+                            // When password changes, re-validate confirm password too
+                            updateValidationStatus('confirmPassword', validateConfirmPassword(value, document.getElementById('confirmPassword').value));
+                            break;
+                        case 'confirmPassword':
+                            updateValidationStatus('confirmPassword', validateConfirmPassword(document.getElementById('password').value, value));
+                            break;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
